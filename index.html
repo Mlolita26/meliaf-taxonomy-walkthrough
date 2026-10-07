@@ -351,7 +351,7 @@ function govSvg(opts){
   const X = [10, 166, 322, 478, 634, 790], W = 144, Y = 44, H = 56;
   const names = ['Contributor', 'AI QA/QC check', 'Champions and curator', 'PPT', 'PRM Steering Group', 'Custodian'];
   const steps = ['1 · Contribute', '2 · Check', '3 · Gate 1', '4 · Gate 2', '5 · Gate 3', '6 · New version'];
-  const subs = ['anyone in CGIAR', 'a report, not a decision', 'MEL · IA · Foresight', 'every contribution passes here', 'chair: Chief Scientist', 'on a cadence'];
+  const subs = ['anyone in CGIAR', 'a report, not a decision', 'MEL · IA · Foresight', 'every contribution', 'chair: Chief Scientist', 'on a cadence'];
   const active = i => { if (route === 'both') return i < upto; if ((route === 'standard' || route === 'ppt') && i === 4) return false; if (route === 'refused' && i > 2) return false; return i < upto; };
   let o = [];
   const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
