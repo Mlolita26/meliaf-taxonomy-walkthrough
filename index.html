@@ -98,6 +98,8 @@ body{font:15px/1.5 "Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif
 .row.empty dd{color:#b8b4c6}
 .row.chg{background:var(--pk-lt);border-left-color:var(--pk-ln)}
 .row.ext{background:var(--bl-lt)} .row.ext dt{color:var(--bl)}
+.story.solo.cols .extras{grid-template-columns:repeat(3,minmax(0,1fr));align-items:start}
+.row.chg.ext{background:#e6dff5;border-left-color:var(--p)}
 .row.new{animation:rowIn .5s ease-out both;animation-delay:calc(.35s + var(--i)*.14s)}
 .row .w{display:inline-block;opacity:0;animation:wIn .3s ease-out both;animation-delay:calc(.45s + var(--j)*22ms)}
 .row li > .w, .row tr.w{display:inline;animation-name:fadeIn} .row tr.w{display:table-row}
@@ -329,20 +331,6 @@ const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;');
 const words=(s,base)=>String(s).split(' ').map((w,j)=>`<span class="w" style="--j:${(base||0)+j}">${esc(w)}</span>`).join(' ');
 
 // The governance flow of the MELIAF taxonomy, drawn as six steps left to right.
-// opts: route 'full' | 'short' | 'refused'; upto = number of steps already active (1..6); kind 'add'|'change'|'deprecate'; qa = text of the check report
-// The governance flow of the MELIAF taxonomy, drawn as six steps left to right.
-// opts: route 'full' | 'short' | 'refused'; upto = number of steps already active (1..6); kind 'add'|'change'|'deprecate'; qa = text of the check report
-// The governance flow of the MELIAF taxonomy, drawn as six steps left to right.
-// opts: route 'standard' | 'escalated' | 'refused'; upto = number of steps already active (1..6); kind 'add'|'change'|'deprecate'; qa = text of the check report
-// The governance flow of the MELIAF taxonomy, drawn as six steps left to right.
-// opts: route 'standard' | 'escalated' | 'refused'; upto = number of steps already active (1..6); kind 'add'|'change'|'deprecate'; qa = text of the check report
-// The governance flow of the MELIAF taxonomy, drawn as six steps left to right.
-// opts: route 'standard' | 'escalated' | 'both' | 'refused'; upto = number of steps already active (1..6); kind 'add'|'change'|'deprecate'; qa = text of the check report
-// The governance flow of the MELIAF taxonomy, drawn as six steps left to right.
-// opts: route 'standard' | 'escalated' | 'both' | 'refused'; upto = number of steps already active (1..6); kind 'add'|'change'|'deprecate'; qa = text of the check report
-// The governance flow of the MELIAF taxonomy, drawn as six steps left to right.
-// opts: route 'standard' | 'ppt' | 'escalated' | 'both' | 'refused'; upto = number of steps already active (1..6); kind 'add'|'change'|'deprecate'; qa = text of the check report
-// The governance flow of the MELIAF taxonomy, drawn as six steps left to right.
 // opts: route 'standard' | 'ppt' | 'escalated' | 'both' | 'refused'; upto = number of steps already active (1..6); kind 'add'|'change'|'deprecate'; qa = text of the check report
 function govSvg(opts){
   opts = opts || {};
@@ -439,6 +427,13 @@ const FLOWS = {
     {t:"Publication", r:"custodian", n:"all formats, same address, change log"},
     {t:"Notification", r:"secretariat", n:"to users of the taxonomy"}],
     at:1, ow:250, outcomes:[{t:"release published; pending changes included"},{t:"release deferred; changes stay pending"}]},
+  domain: {steps:[
+    {t:"Candidate report", r:"anyone, through the custodian", n:"label, definition, source, evidence of use"},
+    {t:"Quality checks", r:"automatic", n:"the nineteen checks of the release"},
+    {t:"Decision", r:"custodian with domain experts", n:"", d:true},
+    {t:"Record", r:"custodian", n:"change log; refused register"},
+    {t:"New version", r:"custodian", n:"retired identifiers kept"}],
+    at:2, ow:250, outcomes:[{t:"accepted; identifier assigned"},{t:"accepted as a synonym"},{t:"refused; in the register with the reason"}]},
   join: {steps:[
     {t:"Expression"+NL+"of interest", r:"domain team", n:"scope, owner, size"},
     {t:"Governance"+NL+"statement", r:"domain custodian", n:"checked against the standard"},
@@ -580,28 +575,109 @@ const O2 = [
    text:"Risk is not deprecated, so this scenario uses a real case from the climate adaptation taxonomy. Exposure (CRK_03) covered two meanings and was split. In the climate adaptation taxonomy this was decided by its custodian under its own intake protocol. In the MELIAF taxonomy a deprecation would pass the first gate and go to the PPT, which would decide with an impact statement, and on to the PRM Steering Group only if the impact were huge or there were no agreement. CRK_03 was deprecated and now points to Climate exposure (CRK_163). The deprecated identifier still resolves and states its replacement, so documents that cite CRK_03 remain readable. The same procedure would apply to Risk.",
    extra:[["blue","Deprecated record",kv([["Identifier","CRK_03"],["Label","Exposure"],["Status","deprecated"],["Replaced by","CRK_163 Climate exposure"],["Reason","the term covered two meanings and was split"],["Decided by","the custodian of the climate adaptation taxonomy, intake protocol"],["Released in","v5.0.0-draft, September 2026"]])],["blue","Replacement record",kv([["Identifier","CRK_163"],["Label","Climate exposure"],["Status","active"],["Definition","Climate risk component referring to the presence of people, livelihoods, species, ecosystems, infrastructure, or assets in places and settings that could be adversely affected by climate hazards."]])]]}]}
 ];
+// Output 3: the climate adaptation taxonomy as a member of the family. Real records on both sides.
+const LX = {
+ scaling:{id:"C000165",label:"Scaling",def:"Investments, strategies and processes aimed at increasing innovation readiness and/ or innovation use to contribute to positive impacts at scale.",src:"MELIA Glossary, version 5",coll:"Implementation · MEL, IA, F"},
+ partner:{id:"C000166",label:"Scaling Partner",def:"Organizations or entities that CGIAR collaborates with to advance the uptake and use of innovations at scale.",src:"MELIA Glossary, version 5",coll:"Implementation · MEL, IA, F"},
+ baseline:{id:"C000216",label:"Baseline Scenario",def:"Scenario in which current trends and policies continue as they are, with no major changes in direction or magnitude of trends in the drivers of a model. They serve to highlight the events that would occur without intervention and determine or estimate the impact of alternative parameter values or context conditions.",src:"AgLEDx glossary; IAES",coll:"Design · Foresight"},
+ riskan:{id:"C000164",label:"Risk analysis",def:"An analysis or an assessment of factors affecting or likely to affect the successful achievement of a development intervention's objectives.",src:"MELIA Glossary, version 5",coll:"Design · MEL, IA, F"},
+ climod:{id:"C000222",label:"Climate Modeling",def:"Use of models to simulate past and future climate conditions and their effects on crop, hydrological, and economic systems to assess risks and adaptation and mitigation options.",src:"CGIAR foresight models overview",coll:"Design · Foresight"},
+ risk:{id:"C000163",label:"Risk",def:"Events that may or have a negative impact on development intervention (or their results) as part of a project, program, or initiative.",src:"MELIA Glossary, version 5",coll:"Design · MEL, IA, F"}
+};
+const CL = {
+ drought:{id:"CRK_102",label:"Drought",def:"Atmospheric hazard characterised by an exceptional period of water shortage for existing ecosystems and the human population, due to low precipitation, high temperature, and/or wind. Sub-types include meteorological, agricultural, hydrological and socio-economic drought.",src:"IPCC AR6 WGII Glossary: Drought",coll:"Facet: Climate risk",syn:"dry spell; water deficit; aridity; water stress",ext:[["Adaptation tag","Adaptation-specific"],["Condition","Intrinsic"],["Pathway stage","Rationale"],["Climate scope","Adaptation"],["Hazard","yes"]]},
+ scaling:{id:"INT_166",label:"Scaling",def:"Intervention that expands the reach, adoption, and sustained use of adaptation innovations, practices, products, or services so that their benefits extend to more people, places, and systems.",src:"CGIAR Scaling Readiness (Sartas and Leeuwis 2020)",coll:"Facet: Intervention",ext:[["Adaptation tag","Adaptation-conditional"],["Condition","counts as adaptation when the intervention addresses a climate hazard or produces a qualifying outcome; not when done purely for productivity, market or development"],["Pathway stage","Intervention"]]},
+ partner:{id:"STK_070",label:"Scaling partner",def:"Actor category comprising organisations that carry innovations to scale through delivery networks, investment or policy channels.",src:"CGIAR partnership category",coll:"Facet: Stakeholder",ext:[["Adaptation tag","Adaptation-conditional"],["Pathway stage","Stakeholder"]]},
+ baseline:{id:"CCC_20",label:"Baseline scenario",def:"Reference case describing the emissions that would occur without the mitigation activity or policy, against which reductions are measured.",src:"IPCC",coll:"Facet: Cross-cutting concept",syn:"business-as-usual; BAU",ext:[["Climate scope","Mitigation"],["Pathway stage","Cross-cutting"]]},
+ riskass:{id:"INT_101",label:"Risk assessment",def:"Intervention that identifies, analyses, and evaluates risks, including the interaction of hazard, exposure, and vulnerability, to inform adaptation and disaster risk reduction decisions.",src:"Sendai Framework; IPCC AR6 WGII",coll:"Facet: Intervention",syn:"risk analysis",ext:[["Adaptation tag","Adaptation-conditional"],["Pathway stage","Intervention"]]},
+ climod:{id:"INT_094",label:"Climate model",def:"Numerical model to simulate and project the climate system, generating the information that underpins climate risk assessment and adaptation planning.",src:"IPCC AR6 WGI",coll:"Facet: Intervention",syn:"climate modeling",ext:[["Adaptation tag","Adaptation-specific"],["Pathway stage","Intervention"]]},
+ crisk:{id:"CRK_01",label:"Climate risk",def:"Potential for adverse consequences for human or ecological systems, arising from the dynamic interaction between climate-related hazards and the exposure and vulnerability of the affected systems.",src:"IPCC AR6 WGII Glossary: Risk",coll:"Facet: Climate risk",syn:"hazard exposure; climate-related risk",ext:[["Adaptation tag","Adaptation-specific"],["Condition","Intrinsic"],["Pathway stage","Rationale"]]},
+ exposure:{blue:true,id:"CRK_03",label:"Exposure",def:"Retired in version 5: the term covered two meanings and was split.",src:"IPCC AR6 WGII Glossary",coll:"Facet: Climate risk",status:"deprecated",ext:[["Replaced by","CRK_163 Climate exposure"]]}
+};
+function pairCard(o, blue, mark){
+  mark = mark || [];
+  const r = (k, l, v, cls) => `<div class="row${mark.includes(k)?' chg':''}${cls?' '+cls:''}"><dt>${l}</dt><dd>${v}</dd></div>`;
+  if (o.blue !== undefined) blue = o.blue;
+  let h = `<div class="term${blue?' blue':''} show"><div class="th"><b>${esc(o.label)}</b><span>${esc(o.id)}${o.status?' · '+esc(o.status):''}</span></div><dl>`;
+  h += r('definition','Definition', esc(o.def)) + r('source','Source', esc(o.src)) + r('coll', blue?'Facet':'Collection', esc(o.coll));
+  if (o.syn) h += r('synonyms','Synonyms', esc(o.syn));
+  (o.ext||[]).forEach(x => { h += r('ext', x[0], esc(x[1]), 'ext'); });
+  return h + `</dl></div>`;
+}
+const DROUGHT_STATE = {id:"CRK_102",label:"Drought",short:null,definition:CL.drought.def,source:CL.drought.src,scope:null,status:"active",replaced:null,provenance:"Lexicon consensus and domain expert (Andreea, Todd)",tv:2,release:"v5.0.0-draft",synonyms:[{label:"dry spell",status:"acceptable"},{label:"water deficit",status:"acceptable"},{label:"aridity",status:"acceptable"},{label:"water stress",status:"acceptable"}],mappings:[],history:[{tv:1,rel:"v4",what:"Created",ref:"import",who:"custodian",when:"2025"},{tv:2,rel:"v5.0.0-draft",what:"Definition aligned to IPCC AR6; synonyms consolidated",ref:"intake protocol",who:"custodian",when:"2026-09"}],refs:[],ext:[["Adaptation tag","Adaptation-specific"],["Condition","Intrinsic"],["Pathway stage","Rationale"],["Climate scope","Adaptation"],["Hazard","yes"]]};
+const MAP = (dec, why, what) => ["pink","Mapping",kv([["Decision",dec],["Why",why],["What changes",what]])];
 const O3 = [
- {id:"member", title:"A domain taxonomy joins the family", d:"The admission procedure", steps:[
-  {title:"A domain taxonomy joins the family", hl:["join","domains","standard"], tag:"illu", flow:{id:"join",upto:6,chosen:0},
-   text:"The climate adaptation taxonomy applies to join. It publishes a governance statement that meets the standard, provides its terms in the shared schema with its extension fields declared, and receives an overlap report listing every term that duplicates or conflicts with a MELIAF term. The family governance admits it. It is entered in the registry and published with the same address pattern as the MELIAF taxonomy. Its content remains under its own custodian.",
-   extra:[["blue","Governance statement, climate adaptation",kv([["Custodian","Climate Adaptation Activator"],["Scope","adaptation-specific and adaptation-conditional concepts, hazards, interventions, results"],["Decision","the custodian with domain experts"],["Decisions recorded","change log; refused terms in a register"],["Releases","by version; retired identifiers kept"],["Extension fields","condition, hazard flag, pathway stage"]])]]}]},
- {id:"ext", title:"Same schema, extension fields", d:"Two records side by side", steps:[
-  {title:"Same schema, extension fields", hl:["schema","domains"], tag:"real", side:"crk",
-   text:"Climate risk (CRK_01) uses the same term record as Risk: identifier, label, definition, source, status, provenance, version, synonyms, mappings and history. In addition it carries the three fields the climate adaptation taxonomy declared as extensions, shown in blue. These fields exist only in that taxonomy; the MELIAF taxonomy does not have them and does not need them."}]},
- {id:"case1", title:"Overlap, case 1", d:"Same word, different meanings", steps:[
-  {title:"Overlap, case 1: same word, different meanings", hl:["domains","gov-domain"], tag:"illu",
-   text:"The climate adaptation taxonomy contains Climate risk (CRK_01). The definitions differ: Risk concerns events that affect a development intervention; Climate risk concerns adverse consequences arising from climate hazards. Both terms are kept. Each receives a scope note that says what it excludes. They are linked by a related mapping, decided by both custodians. The procedure for deciding such cases is still to be defined.",
-   patch:s=>{s.scope="Covers risks of any origin to a development intervention or its results. For risks arising from climate-related hazards, see Climate risk (CRK_01) in the climate adaptation taxonomy."; s.mappings.push({target:"CRK_01 Climate risk",vocab:"climate adaptation taxonomy",kind:"family",match:"related",agreed:"both custodians",status:"agreed"}); accept(s,"Scope note added; mapping to CRK_01 added","CR-0017","both custodians","2027-05-04");},
-   extra:[["blue","Climate adaptation taxonomy",rec(CRK01)]]}]},
- {id:"case2", title:"Overlap, case 2", d:"Different words, same meaning", steps:[
-  {title:"Overlap, case 2: different words, same meaning", hl:["domains","gov-domain"], tag:"illu",
-   text:"The Lexicon term Risk analysis (2524) and the climate term Risk assessment (INT_101) have the same meaning. The climate taxonomy already lists risk analysis as a synonym. The two are linked by a same-as mapping, decided by both custodians, and the domain taxonomy adopts the MELIAF definition. The record of Risk is not changed by this step.",
-   extra:[["purple","MELIAF taxonomy",rec(LEX2)],["blue","Climate adaptation taxonomy",rec(INT101)],["pink","Mapping",`<p>C000164 Risk analysis <b>same as</b> INT_101 Risk assessment</p><p>kind: family &middot; decided by: both custodians &middot; status: agreed</p>`]]}]}
+ {id:"what", title:"What the climate taxonomy is", d:"The facts, one term in full, and its fields on the shared schema", steps:[
+  {title:"What the climate adaptation taxonomy is", hl:["domains"], tag:"real", show:"drought", mark:[],
+   text:"The climate adaptation taxonomy is a domain taxonomy: it covers one field of work and has its own custodian, the Climate Adaptation Activator. Version 5 holds 739 concepts, 982 synonyms and 300 typed relations, grouped in eleven facets. Every concept has a definition with its source, most from the IPCC AR6 glossary, AGROVOC or a CGIAR category. It is already released as a draft SKOS vocabulary with a page per term, it has an intake protocol, a register of refused terms and nineteen quality checks that run before a release. Drought, on the right, is one of its terms.",
+   extra:[["blue","In numbers",kv([["Concepts","739"],["Synonyms","982"],["Typed relations","300, in 11 types: addresses, produces, reduces, part-of, measured-by and others"],["Facets","11: Climate risk, Intervention, Output, Outcome, Impact, Stakeholder, System, Climate driver, Adoption pathway, Breeding trait, Cross-cutting concept"],["Retired identifiers","23, each pointing to its successor"],["Released","v5.0.0-draft, SKOS, one page per term"],["Custodian","Climate Adaptation Activator"]])]]},
+  {title:"One term in full: Drought", hl:["domains","schema"], tag:"real", show:"drought", mark:["ext"],
+   text:"Drought uses the same record as every MELIAF term: identifier, label, definition, source, status, provenance, term version, the version it is in, synonyms, mappings and history. In addition it carries fields that only make sense for climate adaptation, shown in blue: the adaptation tag, the condition under which a term counts as adaptation, the pathway stage, the climate scope and the hazard flag. These are extension fields: declared by the domain, used only there.",
+   extra:[["blue","The extension fields",kv([["Adaptation tag","adaptation-specific, or adaptation-conditional"],["Condition","when a conditional term counts as adaptation"],["Pathway stage","rationale, intervention, output, outcome, impact, stakeholder"],["Climate scope","adaptation, mitigation, both"],["Hazard","whether the term is a climate hazard"]])]]},
+  {title:"Its fields on the shared schema", hl:["schema"], tag:"real", solo:true,
+   text:"Every field of the climate taxonomy has a place: either it is a shared field of the schema, or it is declared as an extension. Nothing is lost and nothing is forced.",
+   extra:[["purple","Field by field",`<table><tr><th style="text-align:left;color:var(--faint);font-weight:600">In the climate taxonomy</th><th style="text-align:left;color:var(--faint);font-weight:600">In the shared schema</th><th style="text-align:left;color:var(--faint);font-weight:600">Kind</th></tr>
+<tr><td>id, for example CRK_102</td><td>identifier, in the domain's own namespace</td><td>shared</td></tr>
+<tr><td>term</td><td>preferred label</td><td>shared</td></tr>
+<tr><td>synonyms</td><td>synonyms, each with a status</td><td>shared</td></tr>
+<tr><td>definition, definition source, reference links</td><td>definition, source</td><td>shared</td></tr>
+<tr><td>facet, parent</td><td>collection, broader term</td><td>shared</td></tr>
+<tr><td>relations: addresses, produces, reduces, part-of, measured-by …</td><td>relations, typed</td><td>shared</td></tr>
+<tr><td>CGIAR example</td><td>example</td><td>shared</td></tr>
+<tr><td>provenance and source identifiers</td><td>provenance</td><td>shared</td></tr>
+<tr><td>retired identifiers with successor</td><td>status deprecated, replaced by</td><td>shared</td></tr>
+<tr><td>adaptation tag, condition, mitigation tag</td><td>extension fields</td><td>domain only</td></tr>
+<tr><td>pathway stage, climate scope, hazard flag, impact area</td><td>extension fields</td><td>domain only</td></tr></table>`]]}]},
+ {id:"join", title:"Joining the family", d:"The admission, and the overlap report with real numbers", steps:[
+  {title:"How a domain taxonomy joins", hl:["join","domains","standard"], tag:"illu", flow:{id:"join",upto:6,chosen:0},
+   text:"A domain taxonomy joins the family as a member; its terms are not merged into the MELIAF taxonomy. It keeps its identifiers in its own namespace, its custodian, its versions and its address. In return it provides its terms in the shared schema with the extensions declared, a governance statement that meets the standard, and it receives an overlap report listing every term that resembles a MELIAF term, with a mapping decision for each. Then it is entered in the registry.",
+   extra:[["blue","Governance statement, climate adaptation",kv([["Custodian","Climate Adaptation Activator"],["Scope","adaptation-specific and adaptation-conditional concepts, hazards, interventions, results"],["Contributions","a candidate report with evidence of use"],["Decision","the custodian with domain experts"],["Recorded","change log; refused terms in a register"],["Releases","by version; retired identifiers kept"],["Extension fields","adaptation tag, condition, mitigation tag, pathway stage, climate scope, hazard flag, impact area"]])]]},
+  {title:"The overlap report, with real numbers", hl:["join","domains"], tag:"real", solo:true, cols:true,
+   text:"The automatic check compared the 739 climate terms with the 312 MELIAF terms. Seven labels are identical. Five climate synonyms are MELIAF labels. About a hundred pairs share a word without being the same thing. The check finds the candidates; a person decides each case. The steps that follow show one case of each kind.",
+   extra:[["pink","Identical labels, 7",kv([["Scaling","INT_166 and C000165"],["Scaling partner","STK_070 and C000166"],["Research","INT_181 and C000157"],["Innovation","OUT_121 and C000092"],["Adoption","ADP_03 and C000025"],["Framework","OUT_083 and C000078"],["Baseline scenario","CCC_20 and C000216"]])],
+          ["pink","A climate synonym is a MELIAF label, 5",kv([["Risk assessment","synonym risk analysis: C000164"],["Capacity sharing","synonym capacity development: C000037"],["Scaling readiness assessment","synonym scaling readiness"],["Climate model","synonym climate modeling: C000222"],["MELIA framework","synonym results framework: C000160"]])],
+          ["purple","Share a word only, about 100",kv([["Examples","Climate change and Change; Climate policy support and Policy; Participatory monitoring and Monitoring"],["Decision","no mapping; the check lists them, the curator closes them"]])]]}]},
+ {id:"cases", title:"When two terms meet", d:"Same word, same meaning, or neither: seven cases with real pairs", steps:[
+  {title:"Case 1: same label, same meaning", hl:["domains","gov-domain"], tag:"real", pair:[LX.partner, CL.partner], pairmark:["definition"],
+   text:"Scaling partner exists on both sides and means the same thing: the organisations that carry innovations to scale. The two records are linked by a same-as mapping. The climate taxonomy keeps its term and adopts the MELIAF definition; its extension fields carry what is specific to adaptation.",
+   extra:[MAP("same as","the two definitions describe the same organisations","the climate term takes the MELIAF definition; both identifiers stay")]},
+  {title:"Case 2: same label, same concept, narrower context", hl:["domains","gov-domain"], tag:"real", pair:[LX.scaling, CL.scaling], pairmark:["ext"],
+   text:"Scaling exists on both sides. The MELIAF definition covers investments and processes that increase innovation use. The climate definition is the same concept seen through the adaptation lens: the intervention that expands the reach of adaptation innovations. The climate term is narrower. It is linked by a narrower-than mapping, and its condition field states when the general term counts as adaptation. This is the most frequent case: Scaling, Research, Innovation, Adoption and Capacity development all follow it.",
+   extra:[MAP("narrower than","the climate term is the MELIAF concept restricted to adaptation","the climate term keeps its definition and its condition; the mapping says which MELIAF term it specialises")]},
+  {title:"Case 3: same label, different meaning", hl:["domains","gov-domain"], tag:"real", pair:[LX.baseline, CL.baseline], pairmark:["definition"],
+   text:"Baseline scenario means two different things. In the MELIAF taxonomy it is a foresight scenario in which current trends continue. In the climate taxonomy it is the emissions that would occur without a mitigation activity. Both terms are kept. Each receives a scope note that says what it excludes, and they are linked by a related mapping, never same-as.",
+   extra:[MAP("related","same words, two meanings: foresight on one side, mitigation accounting on the other","a scope note on each term; both keep their definition")]},
+  {title:"Case 4: different label, same meaning", hl:["domains","gov-domain"], tag:"real", pair:[LX.riskan, CL.riskass], pairmark:["synonyms"],
+   text:"Risk analysis in the MELIAF taxonomy and Risk assessment in the climate taxonomy mean the same thing; the climate term already lists risk analysis as a synonym. The two are linked by a same-as mapping. Each keeps its own label, and the synonyms make a search find both.",
+   extra:[MAP("same as","same meaning under two labels; the synonym already bridges them","no change to either record beyond the mapping")]},
+  {title:"Case 5: similar label, not the same", hl:["domains","gov-domain"], tag:"real", pair:[LX.climod, CL.climod], pairmark:["definition"],
+   text:"Climate Modeling in the MELIAF taxonomy is the use of models to assess risks and options. Climate model in the climate taxonomy is the model itself. They are related, not the same. The same decision applies to the hundred pairs that only share a word: the check lists them, the curator decides, and most receive no mapping at all.",
+   extra:[MAP("related","an activity on one side, the instrument on the other","no change to either record")]},
+  {title:"Case 6: not in the MELIAF taxonomy", hl:["domains"], tag:"real", show:"drought",
+   text:"Drought has no counterpart in the MELIAF taxonomy, and neither do most of the 739 climate terms. No mapping is made. The term lives in the domain only, and anyone who reads the family finds it through the registry.",
+   extra:[MAP("none","no MELIAF term resembles it","nothing; the term stays in the domain")]},
+  {title:"Case 7: a domain term the MELIAF taxonomy comes to need", hl:["domains","gov-core","request"], tag:"illu", pair:[LX.risk, CL.crisk], pairmark:[],
+   text:"Climate risk exists only in the climate taxonomy. If the MELIAF taxonomy comes to need it, two routes are possible. The MELIAF taxonomy adds its own term through its flow and links it same-as to the domain term. Or the domain term is promoted: it becomes a MELIAF term and the domain maps to it. The room has not chosen; the question underneath is who owns the term afterwards.",
+   extra:[MAP("open","the term is needed on both sides","option A: a MELIAF term with a same-as mapping; option B: the domain term is promoted and the domain maps to it")]}]},
+ {id:"gov", title:"Governance of the domain taxonomy", d:"Its own gate, and where the MELIAF flow takes over", steps:[
+  {title:"The domain's own gate", hl:["gov-domain","standard"], tag:"real", flow:{id:"domain",upto:5,chosen:0},
+   text:"A domain taxonomy governs its own content. In the climate adaptation taxonomy a contribution arrives as a candidate report with evidence of use; the custodian decides with domain experts; a refused term goes to a register with the reason; identifiers are never reused; changes go out in versions. That already meets the five requirements of the standard. A change to a term that exists only in the domain, Drought for example, never leaves this gate.",
+   extra:[["blue","What the standard requires, and what the climate taxonomy has",kv([["A named custodian","Climate Adaptation Activator"],["A screen and a decision","candidate report, then the custodian with domain experts"],["Decisions recorded","change log; register of refused terms"],["Changes in versions","v4, v5.0.0-draft"],["Nothing deleted","23 retired identifiers, each with a successor"]])]]},
+  {title:"A change to a mapped term", hl:["gov-domain","gov-core"], tag:"illu", pair:[LX.scaling, CL.scaling], pairmark:["definition"],
+   text:"When the climate taxonomy changes a term that is mapped to a MELIAF term, the mapping may no longer hold. The change is decided at the domain's gate with the MELIAF curator present. If the definition of climate Scaling were widened beyond adaptation, the narrower-than mapping would have to become same-as, or the change would be refused. The MELIAF curator is informed of every change to a mapped term and takes part when the mapping changes.",
+   extra:[["pink","Who decides",kv([["Domain-only term","the domain's custodian"],["Mapped term","the domain's custodian, with the MELIAF curator present"],["Mapping changes","agreed by both custodians"],["To confirm","whether a mapped-term change should instead pass the MELIAF gate itself"]])]]},
+  {title:"A term is deprecated", hl:["gov-domain","gov-core"], tag:"real", pair:[CL.exposure, {blue:true,id:"CRK_163",label:"Climate exposure",def:"Climate risk component referring to the presence of people, livelihoods, species, ecosystems, infrastructure, or assets in places and settings that could be adversely affected by climate hazards.",src:"IPCC AR6 WGII Glossary: Exposure",coll:"Facet: Climate risk",syn:"exposure to climate; climate-exposed; exposed to climate risk",ext:[["Adaptation tag","Adaptation-specific"],["Pathway stage","Rationale"]]}], pairmark:["ext"],
+   text:"Exposure covered two meanings and was split. It was deprecated under the climate taxonomy's own intake protocol and points to Climate exposure. The retired identifier still resolves, so reports that cite it remain readable. Where a deprecation reaches beyond the domain, for example a term that PRMS tagging uses, the MELIAF escalation applies: the PPT decides with an impact statement, and the PRM Steering Group for a huge impact or no agreement. The same two upper gates serve the whole family.",
+   extra:[["pink","Where the MELIAF flow takes over",kv([["Ramifications beyond the domain","the PPT decides, with an impact statement"],["Huge impact, or no agreement","the PRM Steering Group"],["A dispute between the domain and the MELIAF taxonomy","the PPT, as any other disagreement"],["A new extension field","the domain's own decision; promoting it to the shared schema is the schema route"]])]]},
+  {title:"What is still open", hl:[], tag:"illu", solo:true,
+   text:"Domain taxonomies come later, under the same logic as the MELIAF taxonomy. These points are for that discussion.",
+   extra:[["pink","Open points",kv([["Case 2","whether a domain may hold its own restricted version of a MELIAF term, as now, or should only map and carry a condition"],["Case 7","how a domain term becomes a MELIAF term, and who owns it afterwards"],["Mapped terms","whether a change to a mapped term passes the domain's gate with the MELIAF curator present, as proposed, or the MELIAF gate itself"],["Disputes","who settles a disagreement between a domain and the MELIAF taxonomy on a definition"],["Admission","who signs the overlap report and the registry entry"],["Next domains","which taxonomy joins after climate adaptation, and when"]])]]}]}
 ];
+
 const OUTPUTS = [
  {id:"o1", k:"Output 1", title:"The taxonomy as a FAIR persistent data object", d:"How a row of the Lexicon export becomes a record in the schema, is imported with the other terms, and is published in the first release with a permanent identifier.", steps:O1},
  {id:"o2", k:"Output 2", title:"Governance", d:"How a change flows from a contribution to a new version, and the three things that can happen to a term: added, adapted, deprecated.", sub:"First how a change flows, then the three things that can happen to a term. Three gates: the champions and the curator screen; the PPT decides; the PRM Steering Group decides only a huge impact or a disagreement.", scenarios:O2},
- {id:"o3", k:"Output 3", title:"Domain taxonomies: schema and governance", d:"How a domain taxonomy joins the family, uses the same schema with its own extension fields, and resolves overlaps with MELIAF terms.", sub:"Four scenarios, using the climate adaptation taxonomy. Each starts from the record as it is at the end of output 1, term version 1 in release v0.1.0-draft.", scenarios:O3}
+ {id:"o3", k:"Output 3", title:"The climate taxonomy as a member of the family", d:"What the climate adaptation taxonomy is, how it fits the shared schema, what happens when its terms meet MELIAF terms, and how it is governed.", sub:"Four parts, with real terms from both taxonomies. Domain taxonomies come later under the same logic as the MELIAF taxonomy; this is a draft for that discussion.", scenarios:O3}
 ];
 
 // Flat list of scenes
@@ -645,7 +721,7 @@ function rowsOf(s){
   R.push(['release','In release', e(s.release)?null:words(s.release),'not published']);
   R.push(['synonyms','Synonyms', e(s.synonyms)?null:li(s.synonyms,x=>`${esc(x.label)}<span class="pill">${esc(x.status)}</span>`),'none']);
   R.push(['mappings','Mappings', e(s.mappings)?null:`<table>${s.mappings.map((m,j)=>`<tr class="w" style="--j:${j*4}"><td><b>${esc(m.match)}</b></td><td>${esc(m.target)}<br><span style="color:var(--faint)">${esc(m.vocab)}</span></td><td><span class="pill ${m.kind==='family'?'bl':'pk'}">${esc(m.kind)}</span><br><span style="color:var(--faint)">${esc(m.agreed)}; ${esc(m.status)}</span></td></tr>`).join('')}</table>`,'none']);
-  if(s.ext) s.ext.forEach(x=>R.push(['ext'+x[0],x[0],esc(x[1]),'',true]));
+  if(s.ext) s.ext.forEach(x=>R.push(['ext',x[0],esc(x[1]),'',true]));
   R.push(['history','History', e(s.history)?null:`<ul class="hist">${s.history.map((x,j)=>`<li><span class="w" style="--j:${j*3}"><span class="v">v${esc(x.tv)}</span><span style="color:var(--faint)">release ${esc(x.rel)} · </span>${esc(x.what)} <span style="color:var(--faint)">(${esc(x.ref)}${x.who?' · '+esc(x.who):''}${x.when?' · '+esc(x.when):''})</span></span></li>`).join('')}</ul>`,'none']);
   return R;
 }
@@ -692,18 +768,20 @@ function render(){
       const tag=document.getElementById('stag'); tag.className='tag '+st.tag; tag.textContent=st.tag==='real'?'real data':'illustrative';
       document.getElementById('caption').innerHTML=words(st.text);
       document.getElementById('flow').innerHTML=st.gov?govSvg(st.gov):(st.flow?flowSvg(FLOWS[st.flow.id],st.flow.upto,st.flow.chosen):'');
-      const focus = !st.patch && !st.sheet && st.side!=='crk' && st.extra && !st.keep && !st.solo;
+      const focus = !st.patch && !st.sheet && st.side!=='crk' && st.extra && !st.keep && !st.solo && !st.pair && !st.show;
       document.getElementById('extras').innerHTML=(st.sheet?SHEET:'')+((st.extra&&!focus)?st.extra.map((c,i)=>card(c[0],c[1],c[2],i)).join(''):'');
       left.classList.remove('out');
     },230);
     const right=document.getElementById('right');
     const s=stateFor(sc);
     if(o.scenarios && sc.i===0){ prevVals={}; rowsOf(baseState()).forEach(r=>{ prevVals[r[0]]=String(r[2]); }); }
-    const focus = !st.patch && !st.sheet && st.side!=='crk' && st.extra && !st.keep && !st.solo;
-    document.querySelector('#s-story .story').classList.toggle('solo', !!st.solo);
+    const focus = !st.patch && !st.sheet && st.side!=='crk' && st.extra && !st.keep && !st.solo && !st.pair && !st.show;
+    document.querySelector('#s-story .story').classList.toggle('solo', !!st.solo); document.querySelector('#s-story .story').classList.toggle('cols', !!st.cols);
     if(st.solo){ right.innerHTML=''; }
     else if(st.sheet){ right.innerHTML=''; prevVals={}; }
     else if(focus){ right.innerHTML='<div class="focus">'+st.extra.map((c,i)=>card(c[0],c[1],c[2],i)).join('')+'</div>'; }
+    else if(st.pair){ right.innerHTML=pairCard(st.pair[0],false,st.pairmark||[]) + `<div class="second">${pairCard(st.pair[1],true,st.pairmark||[])}</div>`; }
+    else if(st.show==='drought'){ right.innerHTML=renderCard(DROUGHT_STATE,false,{blue:true,show:true,static:true,mark:st.mark||[]}); }
     else if(st.rec){ right.innerHTML=renderCard(st.rec==='newdone'?NEW_DONE:(st.rec==='newacc'?NEW_ACC:NEW_REQ),false,{show:true,static:true,mark:st.mark||[]}) + (st.req?`<div class="second">${card('pink','Request',kv(st.req),0)}</div>`:''); }
     else if(st.side==='crk'){ right.innerHTML=renderCard(CRK_STATE,false,{blue:true,show:true,static:true}) + `<div class="second">${renderCard(s,false,{show:true})}</div>`; }
     else { right.innerHTML=renderCard(s,true,{show:true, mark:st.mark||[]}); }
