@@ -99,6 +99,15 @@ body{font:15px/1.5 "Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif
 .row.chg{background:var(--pk-lt);border-left-color:var(--pk-ln)}
 .row.ext{background:var(--bl-lt)} .row.ext dt{color:var(--bl)}
 .story.solo .sheet{font-size:12px;overflow-x:auto} .story.solo .sheet td{padding:5px 8px}
+.card.plain{background:transparent;padding:0} .card.plain h4{display:none}
+.schema{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.schema section{border:1px solid var(--line);border-radius:8px;background:#fff;overflow:hidden}
+.schema h5{margin:0;padding:9px 16px;background:var(--p);color:#fff;font-size:11.5px;letter-spacing:.07em;text-transform:uppercase;font-weight:650}
+.schema dl{margin:0;padding:2px 0}
+.schema dl>div{display:grid;grid-template-columns:160px 1fr;gap:10px;padding:7px 14px;border-top:1px solid var(--rule);font-size:12.5px;line-height:1.4}
+.schema dl>div:first-child{border-top:0}
+.schema dt{font-weight:650;color:var(--p-dk)} .schema dd{margin:0}
+.schema .by{color:var(--faint);font-size:11.5px;white-space:nowrap}
 .story.solo.cols .extras{grid-template-columns:repeat(3,minmax(0,1fr));align-items:start}
 .row.chg.ext{background:#e6dff5;border-left-color:var(--p)}
 .row.new{animation:rowIn .5s ease-out both;animation-delay:calc(.35s + var(--i)*.14s)}
@@ -498,20 +507,39 @@ const OTHER = [
  {id:"2378", term:"Activity", def:"A measurable amount of work performed to convert inputs (i.e., time and resources) into outputs or innovations."}
 ];
 const miniRec = o => `<p><b>${esc(o.term)}</b> <span style="color:var(--faint)">row ${o.id}</span></p><table><tr><td>Unique identifier</td><td style="color:#b8b4c6">not assigned</td></tr><tr><td>Concept name</td><td>${esc(o.term)}</td></tr><tr><td>Definition</td><td>${esc(o.def)}</td></tr><tr><td>Source</td><td>MELIA Glossary, version 5</td></tr><tr><td>Contributor</td><td>Lexicon consensus · The Lexicon</td></tr></table>`;
+// The Risk record as it stands after output 1; outputs 2 and 3 start from it
+const O1_BASE = [
+ s=>{s.label=LEX.term; s.definition=LEX.def; s.source=LEX.src; s.parent="Design, from the parent term column of the export"; s.contributor="Lexicon consensus · The Lexicon, on behalf of the MELIAF communities";},
+ s=>{s.id="C000163"; s.status="active"; s.tv=1; s.release="v0.1.0-draft"; s.history.push({tv:1,rel:"v0.1.0-draft",what:"Imported from the Lexicon export, row 2523, with 311 other terms",ref:"import",who:"custodian",org:"CGIAR System Organization, to confirm",when:"2026-10-05"});}
+];
+const SCHEMA_GROUPS = [
+ ["What the term is", [
+  ["Unique identifier","A code that never changes and is never reused. It is the term's permanent address; everything else can change around it.","the process, when the term is accepted"],
+  ["Concept name","The name people use for the term.","the contributor"],
+  ["Definition","One paragraph that says what the term is. It stands on its own, without the name.","the contributor"],
+  ["Source","Where the definition comes from: a glossary, a standard, a publication.","the contributor"]]],
+ ["How else it is called, and where it applies", [
+  ["Synonyms","Other names for the same thing, each marked acceptable or not, so that a search finds the term under any of them.","the contributor, or a later request"],
+  ["Context","What the term covers and what it excludes, when the name and the definition alone leave room for doubt.","a later request, when confusion appears"]]],
+ ["Where it sits", [
+  ["Parent concept","The broader term one level up.","the contributor"],
+  ["Child concepts","The narrower terms one level down.","derived from the parents; never typed by hand"],
+  ["Mapping to other taxonomies","Links to the same or a similar term in another taxonomy: same as, narrower than, related. Each link says who agreed to it.","both custodians"]]],
+ ["Who is behind it, and its life", [
+  ["Contributor","Who contributed the term: a name and a legal entity.","the contributor"],
+  ["Status","In use, or deprecated. A deprecated term is never deleted; it names the term that replaces it.","the gate that decides"],
+  ["Version","How many times the term has changed, and which release of the taxonomy it is in.","the process"],
+  ["Version history","Every change the term has been through: what changed, the request number, who decided and their legal entity, and when.","the process, at every decision"]]]
+];
+const SCHEMA_HTML = `<div class="schema">` + SCHEMA_GROUPS.map(([g,rows])=>`<section><h5>${esc(g)}</h5><dl>${rows.map(([n,m,by])=>`<div><dt>${esc(n)}</dt><dd>${esc(m)} <span class="by">filled by ${esc(by)}</span></dd></div>`).join('')}</dl></section>`).join('') + `</div>`;
 const O1 = [
  {title:"The starting point", hl:[], tag:"real", sheet:true,
-  text:"This is the term Risk as it is recorded today, in the Lexicon export. It is one row in a spreadsheet, with a label, a definition, a source, a phase and three functions. It has no identifier, no status and no version."},
- {title:"The term record in the schema", hl:["schema"], tag:"real",
-  text:"The row is transferred to the term record defined by the schema. The concept name, the definition, the source and the parent are taken from the export. The contributor is recorded with its legal entity: the Lexicon consensus, on behalf of the MELIAF communities. The other fields stay empty until a process fills them.",
-  patch:s=>{s.label=LEX.term; s.definition=LEX.def; s.source=LEX.src; s.parent="Design, from the parent term column of the export"; s.contributor="Lexicon consensus · The Lexicon, on behalf of the MELIAF communities";}},
- {title:"Every term in the same record", hl:["schema","core"], tag:"real", keep:true,
-  text:"The same is done for all 312 rows of the export. Each term becomes a record with the same fields: Accountability, Achievements, Activity and the others. The fields that are empty for Risk are empty for all of them at this point. This is what makes the terms one taxonomy rather than a list.",
-  extra: OTHER.map((o,i)=>["purple", "Row "+o.id, miniRec(o)])},
- {title:"Import and first release", hl:["core","gov-core"], tag:"real", shot:true,
-  text:"The 312 records are imported into the working prototype and released together as release v0.1.0-draft. Each term receives a permanent identifier and its own address; Risk is C000163. Each term is at version 1 and the taxonomy is at its first release. From here on, a change to a term moves that term to its next version, and an agreed set of changes becomes the next release of the taxonomy.",
-  patch:s=>{s.id="C000163"; s.status="active"; s.tv=1; s.release="v0.1.0-draft"; s.history.push({tv:1,rel:"v0.1.0-draft",what:"Imported from the Lexicon export, row 2523, with 311 other terms",ref:"import",who:"custodian",org:"CGIAR System Organization, to confirm",when:"2026-10-05"});},
-  extra:[["purple","The prototype",`<p><a href="https://meliaf-taxonomy-kit-dev.synapsis-analytics.com/canvas/govern/releases" target="_blank">meliaf-taxonomy-kit-dev.synapsis-analytics.com/canvas/govern/releases</a></p><p>Release v0.1.0-draft, 312 concepts, 2026-10-05. Files: Turtle, JSON-LD, CSV, JSON, Excel, with checksums.</p><p>The record of Risk: <a href="https://meliaf-taxonomy-kit-dev.synapsis-analytics.com/concept/C000163" target="_blank">meliaf-taxonomy-kit-dev.synapsis-analytics.com/concept/C000163</a></p>`]]}
+  text:"This is the taxonomy as it is recorded today, in the Lexicon export: one row per term in a spreadsheet, with a label, a definition, a source, a phase and three functions. There is no identifier, no status and no version. If a definition changes, nothing records that it changed. If two systems use the same word, nothing says they mean the same row."},
+ {title:"The schema: the fields every term record has", hl:[], tag:"real", solo:true,
+  text:"The schema is the list of fields every term has, and what each is for. It says nothing about any particular term; it is the shape the terms share. Thirteen fields in four groups, and next to each one who fills it: the contributor, the process, or a decision.",
+  extra:[["plain","",SCHEMA_HTML]]}
 ];
+
 
 const O2 = [
  {id:"how", title:"How a change flows", d:"One term, Risk register, from a contribution to a new version", steps:[
@@ -646,7 +674,7 @@ const O3 = [
 ];
 
 const OUTPUTS = [
- {id:"o1", k:"Output 1", title:"The taxonomy as a FAIR persistent data object", d:"How a row of the Lexicon export becomes a record in the schema, is imported with the other terms, and is published in the first release with a permanent identifier.", steps:O1},
+ {id:"o1", k:"Output 1", title:"The taxonomy as a FAIR persistent data object", d:"The spreadsheet we start from, and the schema: the thirteen fields every term record has, and who fills each one.", steps:O1},
  {id:"o2", k:"Output 2", title:"Governance", d:"How a change flows from a contribution to a new version, and the three things that can happen to a term: added, adapted, deprecated.", sub:"First how a change flows, then the three things that can happen to a term. Three gates: the champions and the curator screen; the PPT decides; the PRM Steering Group decides only a huge impact or a disagreement.", scenarios:O2},
  {id:"o3", k:"Output 3", title:"A domain taxonomy: the climate adaptation taxonomy", d:"What we have today, how it fits the shared schema, and the problems we may face when a climate term meets a MELIAF term, with real pairs.", sub:"Two parts: what we have, then six problems with real pairs of terms. Domain taxonomies come later, under the same logic as the MELIAF taxonomy; this is a draft for that discussion.", scenarios:O3}
 ];
@@ -662,7 +690,7 @@ SCENES.push({kind:"end"});
 function initState(){ return {id:null,label:null,definition:null,source:null,scope:null,parent:null,children:[],contributor:null,status:null,tv:null,release:null,synonyms:[],mappings:[],history:[],refs:[]}; }
 function accept(s, what, ref, who, when){ s.tv=(s.tv||0)+1; s.release='pending next release'; s.history.push({tv:s.tv, rel:'pending', what, ref, who, when}); }
 function publish(s, rel){ s.release=rel; s.history.forEach(h=>{ if(h.rel==='pending') h.rel=rel; }); }
-function baseState(){ const s=initState(); O1.forEach(st=>{ if(st.patch) st.patch(s); }); return s; }
+function baseState(){ const s=initState(); O1_BASE.forEach(f=>f(s)); return s; }
 function stateFor(sc){
   const o=OUTPUTS[sc.o];
   if(o.steps){ const s=initState(); for(let k=0;k<=sc.i;k++){ if(o.steps[k].patch) o.steps[k].patch(s); } return s; }
