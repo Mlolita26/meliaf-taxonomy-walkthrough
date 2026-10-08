@@ -530,10 +530,8 @@ const SCHEMA_GROUPS = [
 ];
 const SCHEMA_HTML = `<div class="schema">` + SCHEMA_GROUPS.map(([g,rows])=>`<section><h5>${esc(g)}</h5><dl>${rows.map(([n,m,by])=>`<div><dt>${esc(n)}</dt><dd>${esc(m)} <span class="by">filled by ${esc(by)}</span></dd></div>`).join('')}</dl></section>`).join('') + `</div>`;
 const O1 = [
- {title:"The starting point", hl:[], tag:"real", sheet:true, solo:true,
-  text:"This is the taxonomy as it is recorded today, in the Lexicon export: 312 rows in a spreadsheet, one per term, with a label, a definition, a source, the MELIAF functions and a parent term. Six rows are shown. There is no permanent identifier, no status and no version. If a definition changes, nothing records that it changed; if two systems use the same word, nothing says they mean the same row."},
- {title:"The schema: the fields every term record has", hl:[], tag:"real", solo:true,
-  text:"The schema is the list of fields every term has, and what each is for. It says nothing about any particular term; it is the shape the terms share. Thirteen fields in four groups, and next to each one who fills it: the contributor, the process, or a decision.",
+ {title:"The schema: the fields we agreed on", hl:[], tag:"real", solo:true,
+  text:"The schema is the list of fields every term record has, and what each one is for. Thirteen fields in four groups. Next to each field is who fills it: the contributor, the process, or a decision.",
   extra:[["plain","",SCHEMA_HTML]]}
 ];
 
@@ -671,7 +669,7 @@ const O3 = [
 ];
 
 const OUTPUTS = [
- {id:"o1", k:"Output 1", title:"The taxonomy as a FAIR persistent data object", d:"The spreadsheet we start from, and the schema: the thirteen fields every term record has, and who fills each one.", steps:O1},
+ {id:"o1", k:"Output 1", title:"The schema", d:"The thirteen fields every term record has, as agreed, and who fills each one.", steps:O1},
  {id:"o2", k:"Output 2", title:"Governance", d:"How a change flows from a contribution to a new version, and the three things that can happen to a term: added, adapted, deprecated.", sub:"First how a change flows, then the three things that can happen to a term. Three gates: the champions and the curator screen; the PPT decides; the PRM Steering Group decides only a huge impact or a disagreement.", scenarios:O2},
  {id:"o3", k:"Output 3", title:"A domain taxonomy: the climate adaptation taxonomy", d:"What we have today, how it fits the shared schema, and the problems we may face when a climate term meets a MELIAF term, with real pairs.", sub:"Two parts: what we have, then six problems with real pairs of terms. Domain taxonomies come later, under the same logic as the MELIAF taxonomy; this is a draft for that discussion.", scenarios:O3}
 ];
