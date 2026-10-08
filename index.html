@@ -205,8 +205,8 @@ body{font:15px/1.5 "Segoe UI",system-ui,-apple-system,Helvetica,Arial,sans-serif
 <rect x="390" y="92" width="310" height="96" rx="8" fill="#fdf3f8" stroke="#c2457f" stroke-width="1.2" stroke-dasharray="6 4"/>
 
 <text x="54" y="112" font-size="12.5" font-weight="600" fill="#a1316a">One shared schema</text>
-<text x="54" y="128" font-size="10.5">The fields of every term record: identifier, label, definition,</text>
-<text x="54" y="141" font-size="10.5">source, status, provenance, version, relations, mappings</text>
+<text x="54" y="128" font-size="10.5">The fields of every term record: identifier, concept name, definition, source,</text>
+<text x="54" y="141" font-size="10.5">synonyms, context, parent, children, mappings, contributor, status, version history</text>
 
 <line x1="52" y1="148" x2="52" y2="375" stroke="#c2457f" stroke-width="1.3"/>
 <line x1="52" y1="225" x2="68" y2="225" stroke="#c2457f" stroke-width="1.3" marker-end="url(#aha)"/>
@@ -404,11 +404,11 @@ const FLOWS = {
     {t:"Notification", r:"secretariat", n:"with the term to use"}],
     at:1, ow:280, outcomes:[{t:"refused; entered in the register with the term to use"},{t:"accepted as a synonym of the existing term"}]},
   change: {steps:[
-    {t:"Change"+NL+"request", r:"any CGIAR staff member", n:"definition, synonym, scope note"},
+    {t:"Change"+NL+"request", r:"any CGIAR staff member", n:"definition, synonym, context note"},
     {t:"Decision", r:"the named group", n:"does the meaning change?", d:true},
     {t:"Record", r:"secretariat", n:"previous wording kept in the history"},
     {t:"Publication", r:"custodian", n:"at the version level decided"}],
-    at:1, ow:250, outcomes:[{t:"accepted, minor: typing error"},{t:"accepted, minor: synonym, scope note, wording"},{t:"accepted, major: meaning or label changed"},{t:"refused, reason recorded"}]},
+    at:1, ow:250, outcomes:[{t:"accepted, minor: typing error"},{t:"accepted, minor: synonym, context note, wording"},{t:"accepted, major: meaning or label changed"},{t:"refused, reason recorded"}]},
   govSchema: {steps:[
     {t:"Trigger", r:"a member taxonomy", n:"needs a field or a rule change"},
     {t:"Proposal with"+NL+"impact note", r:"technical steward", n:"members and systems affected"},
@@ -497,25 +497,25 @@ const OTHER = [
  {id:"2375", term:"Achievements", def:"Describes reaching a positive result such as the projected benefits as well as the unintended results."},
  {id:"2378", term:"Activity", def:"A measurable amount of work performed to convert inputs (i.e., time and resources) into outputs or innovations."}
 ];
-const miniRec = o => `<p><b>${esc(o.term)}</b> <span style="color:var(--faint)">row ${o.id}</span></p><table><tr><td>Preferred label</td><td>${esc(o.term)}</td></tr><tr><td>Definition</td><td>${esc(o.def)}</td></tr><tr><td>Source</td><td>MELIA Glossary, version 5</td></tr><tr><td>Provenance</td><td>Lexicon consensus</td></tr><tr><td>Identifier</td><td style="color:#b8b4c6">not assigned</td></tr></table>`;
+const miniRec = o => `<p><b>${esc(o.term)}</b> <span style="color:var(--faint)">row ${o.id}</span></p><table><tr><td>Unique identifier</td><td style="color:#b8b4c6">not assigned</td></tr><tr><td>Concept name</td><td>${esc(o.term)}</td></tr><tr><td>Definition</td><td>${esc(o.def)}</td></tr><tr><td>Source</td><td>MELIA Glossary, version 5</td></tr><tr><td>Contributor</td><td>Lexicon consensus · The Lexicon</td></tr></table>`;
 const O1 = [
  {title:"The starting point", hl:[], tag:"real", sheet:true,
   text:"This is the term Risk as it is recorded today, in the Lexicon export. It is one row in a spreadsheet, with a label, a definition, a source, a phase and three functions. It has no identifier, no status and no version."},
  {title:"The term record in the schema", hl:["schema"], tag:"real",
-  text:"The row is transferred to the term record defined by the schema. The label, definition and source are taken from the export. Provenance is set to Lexicon consensus. The other fields stay empty until a process fills them.",
-  patch:s=>{s.label=LEX.term; s.definition=LEX.def; s.source=LEX.src; s.provenance="Lexicon consensus";}},
+  text:"The row is transferred to the term record defined by the schema. The concept name, the definition, the source and the parent are taken from the export. The contributor is recorded with its legal entity: the Lexicon consensus, on behalf of the MELIAF communities. The other fields stay empty until a process fills them.",
+  patch:s=>{s.label=LEX.term; s.definition=LEX.def; s.source=LEX.src; s.parent="Design, from the parent term column of the export"; s.contributor="Lexicon consensus · The Lexicon, on behalf of the MELIAF communities";}},
  {title:"Every term in the same record", hl:["schema","core"], tag:"real", keep:true,
   text:"The same is done for all 312 rows of the export. Each term becomes a record with the same fields: Accountability, Achievements, Activity and the others. The fields that are empty for Risk are empty for all of them at this point. This is what makes the terms one taxonomy rather than a list.",
   extra: OTHER.map((o,i)=>["purple", "Row "+o.id, miniRec(o)])},
  {title:"Import and first release", hl:["core","gov-core"], tag:"real", shot:true,
   text:"The 312 records are imported into the working prototype and released together as release v0.1.0-draft. Each term receives a permanent identifier and its own address; Risk is C000163. Each term is at version 1 and the taxonomy is at its first release. From here on, a change to a term moves that term to its next version, and an agreed set of changes becomes the next release of the taxonomy.",
-  patch:s=>{s.id="C000163"; s.status="active"; s.tv=1; s.release="v0.1.0-draft"; s.history.push({tv:1,rel:"v0.1.0-draft",what:"Imported from the Lexicon export, row 2523, with 311 other terms",ref:"import",who:"custodian",when:"2026-10-05"});},
+  patch:s=>{s.id="C000163"; s.status="active"; s.tv=1; s.release="v0.1.0-draft"; s.history.push({tv:1,rel:"v0.1.0-draft",what:"Imported from the Lexicon export, row 2523, with 311 other terms",ref:"import",who:"custodian",org:"CGIAR System Organization, to confirm",when:"2026-10-05"});},
   extra:[["purple","The prototype",`<p><a href="https://meliaf-taxonomy-kit-dev.synapsis-analytics.com/canvas/govern/releases" target="_blank">meliaf-taxonomy-kit-dev.synapsis-analytics.com/canvas/govern/releases</a></p><p>Release v0.1.0-draft, 312 concepts, 2026-10-05. Files: Turtle, JSON-LD, CSV, JSON, Excel, with checksums.</p><p>The record of Risk: <a href="https://meliaf-taxonomy-kit-dev.synapsis-analytics.com/concept/C000163" target="_blank">meliaf-taxonomy-kit-dev.synapsis-analytics.com/concept/C000163</a></p>`]]}
 ];
 
 const O2 = [
  {id:"how", title:"How a change flows", d:"One term, Risk register, from a contribution to a new version", steps:[
-  {title:"Anyone in CGIAR can contribute", hl:[], tag:"illu", gov:{upto:1, kind:"add"}, rec:"new", mark:["label","definition","source","provenance"],
+  {title:"Anyone in CGIAR can contribute", hl:[], tag:"illu", gov:{upto:1, kind:"add"}, rec:"new", mark:["label","definition","source","parent","contributor"],
    text:"The aim is a MELIAF taxonomy that is as good as possible, owned and used by many people across the MELIAF space. Anyone in CGIAR with a valid input can contribute. A contribution is one of three things: adapt a term, add a term, or deprecate a term. A MEL focal point contributes Risk register. The contribution is the term record itself, with the four fields a contributor fills in, plus a justification. It receives a request number and a timestamp.",
    req:[["Request","CR-0025"],["Kind","add a term"],["Contributor","MEL focal point"],["Submitted","2027-02-03 10:12"],["Justification","PRMS plan records need a term for the document that lists the risks of an intervention"]]},
   {title:"An automatic check comes first", hl:[], tag:"illu", gov:{upto:2, kind:"add", qa:["no duplicate: Risk and Risk analysis","are close but different terms","elsewhere: ISO 31000 defines a risk register;","AGROVOC and the IPCC glossary have no entry"]}, rec:"new",
@@ -527,10 +527,10 @@ const O2 = [
   {title:"Three gates; magnitude decides how far a contribution goes", hl:[], tag:"illu", gov:{upto:4, kind:"add", route:"escalated"}, rec:"new",
    text:"Every contribution that passes the first gate goes to the Portfolio Performance Team, the second gate. The PPT writes an impact statement, what the change means for each part of the system, one page for and one page against, and decides. In the vast majority of cases that is where it ends: the change goes into the next version, and small changes with local ramifications are flagged to the steering group for information. Only two situations go further, to the third gate: a huge impact beyond MELIAF, into finance, communications and advocacy, resource mobilisation or digital, or no agreement below. Risk register will enter the field list of the PRMS planning module, used by every programme, so the PPT sends it on with its advice for endorsement.",
    req:[["Request","CR-0025 · add a term · MEL focal point · 2027-02-03"],["Check report","no duplicate; fields complete; ISO 31000 agrees"],["Gate","MEL yes · IA yes · Foresight yes after clarification · curator: consistent"],["Gate 1, 2027-02-18","yes; to the PPT"],["PPT, 2027-02-24","impact statement: PRMS adds one value to the risk field, used by every programme; no change for finance, communications or digital; huge impact, sent on to the steering group; advice: endorse"]]},
-  {title:"The PRM Steering Group decides", hl:[], tag:"illu", gov:{upto:5, kind:"add", route:"escalated"}, rec:"newacc", mark:["id","status","tv","release","history"],
+  {title:"The PRM Steering Group decides", hl:[], tag:"illu", gov:{upto:5, kind:"add", route:"escalated"}, rec:"newacc", mark:["id","status","tv","history"],
    text:"The Performance and Results Management Steering Group is the third and final gate, for a huge impact or no agreement below: yes, or no with the reason. It is chaired by the Chief Scientist, with Centre MELIAF representatives, programme and accelerator MELIAF focal points, and representatives of communications and advocacy, donor relations and resource mobilisation, digital and finance. It is being set up and is expected to meet about every six months. It endorses the term. From this moment the term is part of the taxonomy: it receives its identifier, its status becomes active, it is at version 1, and a history line names the request, who decided and when. It waits for the next version.",
    req:[["Request","CR-0025 · add a term · MEL focal point · 2027-02-03"],["Check report","no duplicate; fields complete; ISO 31000 agrees"],["Gate","MEL yes · IA yes · Foresight yes after clarification · curator: consistent"],["Gate 1, 2027-02-18","yes; to the PPT"],["PPT, 2027-02-24","impact statement; huge impact, sent on; advice: endorse"],["PRM Steering Group, 2027-03-15","endorsed; minutes 2027-03, item 4; identifier C000313 assigned"]]},
-  {title:"A new version, on a cadence", hl:[], tag:"illu", gov:{upto:6, kind:"add", route:"both"}, rec:"newdone", mark:["release","history"],
+  {title:"A new version, on a cadence", hl:[], tag:"illu", gov:{upto:6, kind:"add", route:"both"}, rec:"newdone", mark:["tv","history"],
    text:"Whichever gate accepted a change, the champions, the PPT or the steering group, the result is the same: the change is in the taxonomy and goes into the next version. The custodian issues new versions on a cadence that is still open: every month, every six months, every year, or live. A yearly cadence risks an out-of-date taxonomy for a whole year. Each version is time-stamped, numbered, and carries a change log that lists the requests it contains. The tools that draw on the taxonomy, quality assurance, drafting assistants and reporting, use the current version continuously, with the version change notes, and can alert a writer who still uses old wording. Risk register is in version v0.2.0.",
    req:[["Request","CR-0025 · add a term · MEL focal point · 2027-02-03"],["Check report","no duplicate; fields complete; ISO 31000 agrees"],["Gate","MEL yes · IA yes · Foresight yes after clarification · curator: consistent"],["Gate 1, 2027-02-18","yes; to the PPT"],["PPT, 2027-02-24","impact statement; huge impact, sent on; advice: endorse"],["PRM Steering Group, 2027-03-15","endorsed; identifier C000313 assigned"],["Custodian, 2027-04-01","in version v0.2.0 with 13 other accepted changes; change log entry; contributor notified; PRMS and the drafting assistants read v0.2.0"]]},
   {title:"What is still open", hl:[], tag:"illu", solo:true, gov:{upto:6},
@@ -551,23 +551,23 @@ const O2 = [
 <tr><td>2027-04-01 09:00</td><td>custodian</td><td>New version</td><td>in version v0.2.0; change log entry; contributor notified; the tools read v0.2.0</td></tr></table>`],
    ["purple","Where it is recorded",kv([["On the request","identifier, kind, contributor, justification, the check report, a timestamp and a role for every step, the views, the impact statement, the advice, the decision, the reason"],["On the term","a history line per request: term version, the version of the taxonomy, what changed, who decided, when"],["On the version","number, date, who issued it, the change log listing every request included"],["In the register","every refused request with its reason"],["To the contributor","a notification at every step"]])]]}]},
  {id:"add", title:"A term is added", d:"A concept that is not in the taxonomy yet", steps:[
-  {title:"A term is added: the request", hl:[], tag:"illu", gov:{upto:1, kind:"add"}, rec:"new", mark:["label","definition","source","provenance"],
-   text:"A MEL focal point proposes Risk register, a term that does not exist in the taxonomy. The request uses the same record as every other term. The requester fills in the preferred label, the definition, the source and the provenance; these are the fields required before a term can be accepted. The identifier, status, version and release are not filled by the requester: they are assigned by the process."},
-  {title:"A term is added: accepted and published", hl:["request","gov-core"], tag:"illu", gov:{upto:6, kind:"add", route:"escalated"}, rec:"newdone", mark:["id","status","tv","release","history"],
+  {title:"A term is added: the request", hl:[], tag:"illu", gov:{upto:1, kind:"add"}, rec:"new", mark:["label","definition","source","parent","contributor"],
+   text:"A MEL focal point proposes Risk register, a term that does not exist in the taxonomy. The request uses the same record as every other term. The contributor fills in the concept name, the definition, the source, the parent and their own name and legal entity; these are the fields required before a term can be accepted. The identifier, status and version are not filled by the contributor: they are assigned by the process."},
+  {title:"A term is added: accepted and published", hl:["request","gov-core"], tag:"illu", gov:{upto:6, kind:"add", route:"escalated"}, rec:"newdone", mark:["id","status","tv","history"],
    text:"The check report finds no duplicate: Risk register is close to Risk but not the same term. The three champions, after checking with their communities, say yes, and the curator finds it consistent with the existing terms. Because the term will enter the field list of the PRMS planning module, it is escalated: the PPT writes an impact statement and the PRM Steering Group endorses it. The process assigns the identifier C000313, sets the status to active, starts the term at version 1, and records the request in the history. The term is in version v0.2.0 and linked to Risk as a related term. The record of Risk does not change."}]},
- {id:"change", title:"A term is adapted", d:"Any change to an existing term: the definition, a synonym, a scope note, a relation, a mapping", steps:[
-  {title:"What can be changed", hl:[], tag:"illu", keep:true, gov:{upto:1, kind:"change"}, mark:["label","short","definition","scope","synonyms","mappings"],
-   text:"Any change to an existing term, adapting it, goes through the same request. The fields marked on the record are the ones a request can change: the preferred label, the definition, the short definition, the scope note, the synonyms, the relations and the mappings. The identifier never changes. Each accepted change moves the term to its next version and is recorded in the history. The cases that follow show four of them.",
-   extra:[["purple","Kinds of change to a term",kv([["Definition","reworded, clarified or corrected"],["Label","the preferred label is changed; the old label is kept as a synonym"],["Synonym","another way of saying the term is added, with a status"],["Scope note","what the term covers and excludes is stated"],["Relation","a link to another term is added or removed"],["Mapping","a link to a term in another vocabulary is added"]])]]},
+ {id:"change", title:"A term is adapted", d:"Any change to an existing term: the definition, a synonym, a context note, a relation, a mapping", steps:[
+  {title:"What can be changed", hl:[], tag:"illu", keep:true, gov:{upto:1, kind:"change"}, mark:["label","definition","scope","parent","children","synonyms","mappings"],
+   text:"Any change to an existing term, adapting it, goes through the same request. The fields marked on the record are the ones a request can change: the concept name, the definition, the context, the parent and the children, the synonyms and the mappings. The identifier never changes. Each accepted change moves the term to its next version and is recorded in the history. The cases that follow show four of them.",
+   extra:[["purple","Kinds of change to a term",kv([["Definition","reworded, clarified or corrected"],["Concept name","the name is changed; the old name is kept as a synonym"],["Synonym","another way of saying the term is added, with a status"],["Context","what the term covers and excludes is stated"],["Parent or child","the place of the term in the hierarchy is changed"],["Mapping","a link to a term in another vocabulary is added"]])]]},
   {title:"Case 1: the definition is reworded", hl:[], tag:"illu", gov:{upto:6, kind:"change", route:"standard"},
    text:"A reviewer proposes a clearer wording of the definition: may have or have had a negative impact, instead of may or have. The check report finds no duplicate. The three champions agree that the wording is clearer and the meaning unchanged; the curator confirms. The PPT finds no ramifications beyond MELIAF and decides: the change goes into the next version, and the steering group is told for information. The term moves to version 2 and the previous wording is kept in the history.",
    patch:s=>{s.definition="Events that may have or have had a negative impact on a development intervention (or its results) as part of a project, program, or initiative."; accept(s,"Definition reworded without change of meaning; previous wording kept","CR-0036","champions MEL, IA, Foresight","2027-02-20");}},
   {title:"Case 2: a synonym is added", hl:[], tag:"illu", gov:{upto:6, kind:"change", route:"standard"},
    text:"A Community of Practice proposes programme risk as a synonym. The check report finds no duplicate. The three champions agree that it is a synonym and not a new term. The PPT decides: the change goes into the next version. The term moves to version 3 and the contributor is informed.",
    patch:s=>{s.synonyms.push({label:"programme risk",status:"acceptable"}); accept(s,"Synonym programme risk added, status acceptable","CR-0031","champions MEL, IA, Foresight","2027-03-02");}},
-  {title:"Case 3: a scope note is added", hl:[], tag:"illu", gov:{upto:6, kind:"change", route:"standard"},
-   text:"A MEL focal point asks for a scope note, because Risk is being confused with the climate term Climate risk in reports. The scope note states what the term covers and what it does not. The champions agree and the PPT decides: the change goes into the next version. The term moves to version 4.",
-   patch:s=>{s.scope="Covers risks of any origin to a development intervention or its results. Risks arising from climate-related hazards are covered by Climate risk in the climate adaptation taxonomy."; accept(s,"Scope note added","CR-0040","champions MEL, IA, Foresight","2027-03-09");}},
+  {title:"Case 3: a context note is added", hl:[], tag:"illu", gov:{upto:6, kind:"change", route:"standard"},
+   text:"A MEL focal point asks for a context note, because Risk is being confused with the climate term Climate risk in reports. The context note states what the term covers and what it does not. The champions agree and the PPT decides: the change goes into the next version. The term moves to version 4.",
+   patch:s=>{s.scope="Covers risks of any origin to a development intervention or its results. Risks arising from climate-related hazards are covered by Climate risk in the climate adaptation taxonomy."; accept(s,"Context note added","CR-0040","champions MEL, IA, Foresight","2027-03-09");}},
   {title:"Case 4: a proposal is refused, the term already exists", hl:[], tag:"illu", gov:{upto:3, kind:"add", route:"refused", qa:["Risks: a term named Risk exists (C000163)"]},
    text:"Another requester proposes Risks as a new term. The check report says that Risk already exists. The three champions refuse the contribution on that basis. It is entered in the register with the reason and the term to use, and the requester is informed. The record of Risk does not change.",
    extra:[["pink","Register of refused proposals",kv([["Proposed label","Risks"],["Decision","refused"],["Reason","duplicate of an existing label"],["Use instead","Risk, C000163"],["May be proposed again","no"]])]]}]},
@@ -603,7 +603,7 @@ function pairCard(o, blue, mark){
   (o.ext||[]).forEach(x => { h += r('ext', x[0], esc(x[1]), 'ext'); });
   return h + `</dl></div>`;
 }
-const DROUGHT_STATE = {id:"CRK_102",label:"Drought",short:null,definition:CL.drought.def,source:CL.drought.src,scope:null,status:"active",replaced:null,provenance:"Lexicon consensus and domain experts",tv:2,release:"v5.0.0-draft",synonyms:[{label:"dry spell",status:"acceptable"},{label:"water deficit",status:"acceptable"},{label:"aridity",status:"acceptable"},{label:"water stress",status:"acceptable"}],mappings:[],history:[{tv:1,rel:"v4",what:"Created",ref:"import",who:"custodian",when:"2025"},{tv:2,rel:"v5.0.0-draft",what:"Definition aligned to IPCC AR6; synonyms consolidated",ref:"intake protocol",who:"custodian",when:"2026-09"}],refs:[],ext:[["Adaptation tag","Adaptation-specific"],["Condition","Intrinsic"],["Pathway stage","Rationale"],["Climate scope","Adaptation"],["Parent","CRK_101 Atmospheric hazard"]]};
+const DROUGHT_STATE = {id:"CRK_102",label:"Drought",short:null,definition:CL.drought.def,source:CL.drought.src,scope:null,status:"active",replaced:null,parent:"CRK_101 Atmospheric hazard",children:[],contributor:"Climate Adaptation Activator · Alliance of Bioversity International and CIAT",tv:2,release:"v5.0.0-draft",synonyms:[{label:"dry spell",status:"acceptable"},{label:"water deficit",status:"acceptable"},{label:"aridity",status:"acceptable"},{label:"water stress",status:"acceptable"}],mappings:[],history:[{tv:1,rel:"v4",what:"Created",ref:"import",who:"custodian",when:"2025"},{tv:2,rel:"v5.0.0-draft",what:"Definition aligned to IPCC AR6; synonyms consolidated",ref:"intake protocol",who:"custodian",when:"2026-09"}],refs:[],ext:[["Adaptation tag","Adaptation-specific"],["Condition","Intrinsic"],["Pathway stage","Rationale"],["Climate scope","Adaptation"]]};
 
 // The climate taxonomy as it is today: real rows and columns of master_v5_clean.csv (24 columns; 10 shown)
 const cut = s => `<span style="color:#9a97a8">${esc(s.slice(0,70))}…</span>`;
@@ -630,10 +630,10 @@ const O3 = [
    extra:[PROB("our record has fields and information that MELIAF does not have", "the shared fields are shared; the extra ones are declared as extension fields and stay with the domain term; a same-as mapping links the two records, and both keep their identifier")]},
   {title:"Same idea, different context", hl:["domains","gov-domain"], tag:"real", pair:[LX.risk, CL.crisk], pairmark:["definition","source"],
    text:"Risk in the MELIAF taxonomy is anything that threatens a development intervention or its results. Climate risk in the climate taxonomy is the potential for harm arising from climate hazards, exposure and vulnerability, defined by the IPCC. The idea is close, the context is not: one comes from evaluation practice, the other from climate science. A reader of one would not necessarily recognise the other.",
-   extra:[PROB("close in meaning, but defined in two different contexts", "keep both; a related or narrower-than mapping between them; a scope note on each saying which context it belongs to; the climate term keeps its IPCC definition")]},
+   extra:[PROB("close in meaning, but defined in two different contexts", "keep both; a related or narrower-than mapping between them; a context note on each saying which context it belongs to; the climate term keeps its IPCC definition")]},
   {title:"Same word, different meaning", hl:["domains","gov-domain"], tag:"real", pair:[LX.baseline, CL.baseline], pairmark:["definition"],
    text:"Baseline scenario means two different things. In the MELIAF taxonomy it is a foresight scenario in which current trends continue. In the climate taxonomy it is the emissions that would occur without a mitigation activity. A search for the words finds both, and a reader could pick the wrong one.",
-   extra:[PROB("one label, two meanings", "keep both; a scope note on each that says what it excludes; a related mapping, never same-as")]},
+   extra:[PROB("one label, two meanings", "keep both; a context note on each that says what it excludes; a related mapping, never same-as")]},
   {title:"Different words, same meaning", hl:["domains","gov-domain"], tag:"real", pair:[LX.riskan, CL.riskass], pairmark:["synonyms"],
    text:"Risk analysis in the MELIAF taxonomy and Risk assessment in the climate taxonomy mean the same thing. Nobody searching for one would find the other, unless the records say they are the same. The climate taxonomy already lists risk analysis as a synonym.",
    extra:[PROB("the same idea hidden under two labels", "a same-as mapping; each keeps its own label; the synonyms make a search find both")]},
@@ -659,7 +659,7 @@ OUTPUTS.forEach((o,oi)=>{
 });
 SCENES.push({kind:"end"});
 
-function initState(){ return {id:null,label:null,short:null,definition:null,source:null,scope:null,status:null,provenance:null,tv:null,release:null,synonyms:[],mappings:[],history:[],refs:[]}; }
+function initState(){ return {id:null,label:null,definition:null,source:null,scope:null,parent:null,children:[],contributor:null,status:null,tv:null,release:null,synonyms:[],mappings:[],history:[],refs:[]}; }
 function accept(s, what, ref, who, when){ s.tv=(s.tv||0)+1; s.release='pending next release'; s.history.push({tv:s.tv, rel:'pending', what, ref, who, when}); }
 function publish(s, rel){ s.release=rel; s.history.forEach(h=>{ if(h.rel==='pending') h.rel=rel; }); }
 function baseState(){ const s=initState(); O1.forEach(st=>{ if(st.patch) st.patch(s); }); return s; }
@@ -668,7 +668,7 @@ function stateFor(sc){
   if(o.steps){ const s=initState(); for(let k=0;k<=sc.i;k++){ if(o.steps[k].patch) o.steps[k].patch(s); } return s; }
   const s=baseState(); const seq=o.scenarios[sc.sc].steps; for(let k=0;k<=sc.i;k++){ if(seq[k].patch) seq[k].patch(s); } return s;
 }
-const NEW_REQ = {id:null,label:"Risk register",short:null,definition:"A document that lists the identified risks of an intervention, their likelihood, their consequences and the measures planned.",source:"MELIAF planning guidance, 2026",scope:null,status:null,provenance:"Domain expert",tv:null,release:null,synonyms:[],mappings:[],history:[],refs:[]};
+const NEW_REQ = {id:null,label:"Risk register",definition:"A document that lists the identified risks of an intervention, their likelihood, their consequences and the measures planned.",source:"MELIAF planning guidance, 2026",scope:null,parent:"Design",children:[],contributor:"a MEL officer · International Food Policy Research Institute (IFPRI)",status:null,tv:null,release:null,synonyms:[],mappings:[],history:[],refs:[]};
 const NEW_ACC = Object.assign({}, NEW_REQ, {id:"C000313",status:"active",tv:1,release:"pending next release",history:[{tv:1,rel:"pending",what:"Added on request; related to Risk (C000163)",ref:"CR-0025",who:"PRM Steering Group",when:"2027-03-15"}]});
 const NEW_DONE = Object.assign({}, NEW_REQ, {id:"C000313",status:"active",tv:1,release:"v0.2.0",history:[{tv:1,rel:"v0.2.0",what:"Added on request; related to Risk (C000163)",ref:"CR-0025",who:"PRM Steering Group",when:"2027-03-15"}]});
 const CRK_STATE = {id:"CRK_01",label:"Climate risk",short:null,definition:CRK01.def,source:CRK01.src,scope:null,status:"active",provenance:"Domain expert",tv:3,release:"5.0",synonyms:[{label:"hazard exposure",status:"acceptable"},{label:"climate-related risk",status:"acceptable"}],mappings:[{target:"Risk, IPCC AR6 WGII glossary",vocab:"IPCC glossary",kind:"external",match:"close",agreed:"climate custodian",status:"agreed"}],history:[{tv:1,rel:"4.0",what:"Created",ref:"import"},{tv:3,rel:"5.0",what:"Definition aligned to IPCC AR6",ref:"intake protocol"}],refs:[],ext:[["Adaptation tag","Adaptation-specific"],["Condition","Intrinsic"],["Pathway stage","Climate risk"]]};
@@ -678,22 +678,22 @@ let prevVals={};
 function rowsOf(s){
   const e=v=>v===null||v===undefined||(Array.isArray(v)&&!v.length);
   const li=(arr,f)=>`<ul>${arr.map((x,j)=>`<li><span class="w" style="--j:${j*3}">${f(x)}</span></li>`).join('')}</ul>`;
+  const orgOf=h=>h.org||(/PPT|Steering/.test(h.who||'')?'CGIAR System Organization':/custodian/.test(h.who||'')?'CGIAR System Organization, to confirm':/champion/.test(h.who||'')?'the three communities of practice':'');
   const R=[];
-  R.push(['id','Identifier', e(s.id)?null:`<span class="mono">${esc(s.id)}</span>`,'not assigned']);
-  R.push(['label','Preferred label', e(s.label)?null:words(s.label),'empty']);
-  R.push(['short','Short definition', e(s.short)?null:words(s.short),'field not in schema yet']);
+  R.push(['id','Unique identifier', e(s.id)?null:`<span class="mono">${esc(s.id)}</span>`,'not assigned']);
+  R.push(['label','Concept name', e(s.label)?null:words(s.label),'empty']);
   R.push(['definition','Definition', e(s.definition)?null:words(s.definition),'empty']);
   R.push(['source','Source', e(s.source)?null:words(s.source),'empty']);
-  R.push(['scope','Scope note', e(s.scope)?null:words(s.scope),'none']);
-  R.push(['status','Status', e(s.status)?null:words(s.status)+(s.status==='active'?'<span class="pill">in use</span>':''),'none']);
-  R.push(['replaced','Replaced by', e(s.replaced)?null:esc(s.replaced),'none']);
-  R.push(['provenance','Provenance', e(s.provenance)?null:words(s.provenance),'empty']);
-  R.push(['tv','Term version', e(s.tv)?null:`<span class="mono w" style="--j:0">${esc(s.tv)}</span>`,'none']);
-  R.push(['release','In release', e(s.release)?null:words(s.release),'not published']);
   R.push(['synonyms','Synonyms', e(s.synonyms)?null:li(s.synonyms,x=>`${esc(x.label)}<span class="pill">${esc(x.status)}</span>`),'none']);
-  R.push(['mappings','Mappings', e(s.mappings)?null:`<table>${s.mappings.map((m,j)=>`<tr class="w" style="--j:${j*4}"><td><b>${esc(m.match)}</b></td><td>${esc(m.target)}<br><span style="color:var(--faint)">${esc(m.vocab)}</span></td><td><span class="pill ${m.kind==='family'?'bl':'pk'}">${esc(m.kind)}</span><br><span style="color:var(--faint)">${esc(m.agreed)}; ${esc(m.status)}</span></td></tr>`).join('')}</table>`,'none']);
+  R.push(['scope','Context', e(s.scope)?null:words(s.scope),'none']);
+  R.push(['parent','Parent concept', e(s.parent)?null:words(s.parent),'none, top level']);
+  R.push(['children','Child concepts', e(s.children)?null:li(s.children,x=>esc(x)),'none']);
+  R.push(['mappings','Mapping to other taxonomies', e(s.mappings)?null:`<table>${s.mappings.map((m,j)=>`<tr class="w" style="--j:${j*4}"><td><b>${esc(m.match)}</b></td><td>${esc(m.target)}<br><span style="color:var(--faint)">${esc(m.vocab)}</span></td><td><span class="pill ${m.kind==='family'?'bl':'pk'}">${esc(m.kind)}</span><br><span style="color:var(--faint)">${esc(m.agreed)}; ${esc(m.status)}</span></td></tr>`).join('')}</table>`,'none']);
+  R.push(['contributor','Contributor', e(s.contributor)?null:words(s.contributor),'empty']);
+  R.push(['status','Status', e(s.status)?null:words(s.status)+(s.status==='active'?'<span class="pill">in use</span>':'')+(s.replaced?` <span style="color:var(--faint)">replaced by ${esc(s.replaced)}</span>`:''),'none']);
+  R.push(['tv','Version', e(s.tv)?null:`<span class="mono w" style="--j:0">${esc(s.tv)}</span>`+(s.release?` <span style="color:var(--faint)">${/^pending/.test(s.release)?'· '+esc(s.release):'in release '+esc(s.release)}</span>`:''),'none']);
   if(s.ext) s.ext.forEach(x=>R.push(['ext',x[0],esc(x[1]),'',true]));
-  R.push(['history','History', e(s.history)?null:`<ul class="hist">${s.history.map((x,j)=>`<li><span class="w" style="--j:${j*3}"><span class="v">v${esc(x.tv)}</span><span style="color:var(--faint)">release ${esc(x.rel)} · </span>${esc(x.what)} <span style="color:var(--faint)">(${esc(x.ref)}${x.who?' · '+esc(x.who):''}${x.when?' · '+esc(x.when):''})</span></span></li>`).join('')}</ul>`,'none']);
+  R.push(['history','Version history', e(s.history)?null:`<ul class="hist">${s.history.map((x,j)=>`<li><span class="w" style="--j:${j*3}"><span class="v">v${esc(x.tv)}</span><span style="color:var(--faint)">release ${esc(x.rel)} · </span>${esc(x.what)} <span style="color:var(--faint)">(${esc(x.ref)}${x.who?' · '+esc(x.who):''}${orgOf(x)?', '+esc(orgOf(x)):''}${x.when?' · '+esc(x.when):''})</span></span></li>`).join('')}</ul>`,'none']);
   return R;
 }
 function renderCard(s, animate, opts){
